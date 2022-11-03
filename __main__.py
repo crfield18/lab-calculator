@@ -1,4 +1,11 @@
-import python.lab as lab
+import python.conc as conc
+import python.cv as cv
+
+import argparse
+
+def input():
+    pass
 
 if __name__ == '__main__':
-    lab.test()
+    conc.test()
+    cv.cv()

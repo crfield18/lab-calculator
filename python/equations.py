@@ -10,13 +10,16 @@ class ncv_triangle: # mass = mol/mw etc.
         self.conc = conc    # conc in M
 
     def find_conc(self, mw, mass, vol):
-        return (mass/mw) * vol
+        return (mass/mw) / vol
 
     def find_vol(self, mw, mass, conc):
         return (mass/mw) / conc
 
     def find_mass(self, mw, conc, vol):
         return mw * conc * vol
+
+    def find_mw(self, mass, conc, vol):
+        return mass / (conc*vol)
             
     def missing_var(self):
         try:
@@ -29,9 +32,9 @@ class ncv_triangle: # mass = mol/mw etc.
                 elif self.vol == None:
                     return ncv_triangle.find_vol(self, self.mw, self.mass, self.conc)
                 elif self.mass == None:
-                    return ncv_triangle.find_mass(self, self.mw, self.conc, self.vol)
-                elif type(self.mw) != float:
-                    raise VariableError(f'Molecular Weight value missing.')
+                    return ncv_triangle.find_mass(self, self.mw, self.vol, self.conc)
+                elif self.mw == None:
+                    return ncv_triangle.find_mw(self, self.mass, self.vol, self.conc)
         except TypeError:
             print('Unsupported operand type used as function input. This function only accepts: int, float or None')
 

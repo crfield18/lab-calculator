@@ -1,44 +1,46 @@
 from operator import countOf
 from typing import Union
+from python.exceptions import *
 
-class VariableError(ValueError):
-    pass
+class ncv_triangle: # mass = mol/mw etc.
+    def __init__(self, mw:Union[float, None], mass:Union[float, None], vol:Union[float, None], conc:Union[float, None]):
+        self.mw = mw        # molecular weight        
+        self.mass = mass    # mass in g
+        self.vol = vol      # volume in l
+        self.conc = conc    # conc in M
 
-class ncv_triangle:
-    def __init__(self, mass:Union[float, None], mw:Union[float, None], vol:Union[float, None], conc:Union[float, None]):
-        self.mass = mass
-        self.mw = mw
-        self.vol = vol
-        self.conc = conc
-
-        print(f'{type(mass)}, {type(mw)}, {type(vol)}, {type(conc)}')
-
-    def find_conc(self, mass, mw, vol):
+    def find_conc(self, mw, mass, vol):
         return (mass/mw) * vol
 
-    def find_vol(self, mass, mw, conc):
+    def find_vol(self, mw, mass, conc):
         return (mass/mw) / conc
 
     def find_mass(self, mw, conc, vol):
         return mw * conc * vol
             
     def missing_var(self):
-        if all(value != None for value in vars(self).values()) or all(type(value) == Union[float, int] for value in vars(self).values()):
-            raise ValueError(f'one variable must equal {None}. Current {None} count: {countOf(vars(self).values(), None)}')
-        else:
-            if self.conc == None:
-                return ncv_triangle.find_conc(self, self.mass, self.mw, self.vol)
-            elif self.vol == None:
-                return ncv_triangle.find_vol(self, self.mass, self.mw, self.conc)
-            elif self.mass == None:
-                return ncv_triangle.find_mass(self, self.mw, self.conc, self.vol)
+        try:
+            none_count = countOf(vars(self).values(), None)
+            if none_count != 1:
+                raise VariableError(f'1 variable must equal {None}. Current {None} count: {none_count}')
+            else:
+                if self.conc == None:
+                    return ncv_triangle.find_conc(self, self.mw, self.mass, self.vol)
+                elif self.vol == None:
+                    return ncv_triangle.find_vol(self, self.mw, self.mass, self.conc)
+                elif self.mass == None:
+                    return ncv_triangle.find_mass(self, self.mw, self.conc, self.vol)
+                elif type(self.mw) != float:
+                    raise VariableError(f'Molecular Weight value missing.')
+        except TypeError:
+            print('Unsupported operand type used as function input. This function only accepts: int, float or None')
 
-class c1v1:
+class c1v1: #c1v1 = c2v2
     def __init__(self, c1:Union[float, None], v1:Union[float, None], c2:Union[float, None], v2:Union[float, None]):
-        self.c1 = c1
-        self.v1 = v1
-        self.c2 = c2
-        self.v2 = v2
+        self.c1 = c1    # conc 1
+        self.v1 = v1    # vol 1
+        self.c2 = c2    # conc 2
+        self.v2 = v2    # vol 2
 
     def find_c1(self, v1, c2, v2):
         return (c2 * v2) / v1
